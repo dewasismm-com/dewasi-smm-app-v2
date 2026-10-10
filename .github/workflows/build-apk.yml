@@ -28,6 +28,10 @@ jobs:
           flutter create --platforms=android --project-name=dewasi_smm_webview .
           flutter pub get
 
+      - name: Fix main.dart compile error
+        run: |
+          sed -i 's/await SystemChrome\.setSystemUIOverlayStyle(/SystemChrome.setSystemUIOverlayStyle(/' project/lib/main.dart
+
       - name: Build APK
         run: |
           cd project
