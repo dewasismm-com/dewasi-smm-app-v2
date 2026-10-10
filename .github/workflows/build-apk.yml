@@ -1,0 +1,40 @@
+name: Build Dewasi SMM APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: |
+          mkdir -p project
+          unzip -o dewasi_smm_webview_final_project.zip -d project
+          echo "Extracted files:"
+          find project -maxdepth 3 -type f | head -50
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Prepare Android project
+        run: |
+          cd project
+          flutter create --platforms=android --project-name=dewasi_smm_webview .
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd project
+          flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: dewasi-smm-apk
+          path: project/build/app/outputs/flutter-apk/app-debug.apk
